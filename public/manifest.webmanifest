@@ -1,0 +1,68 @@
+{
+  "name": "Salora",
+  "short_name": "Salora",
+  "description": "Salora — Production-grade single-salon and luxury spa management system.",
+  "start_url": "/dashboard",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0F0E1E",
+  "theme_color": "#7c3aed",
+  "categories": ["business", "productivity", "lifestyle"],
+  "icons": [
+    {
+      "src": "/salora.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/salora.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Live Appointments",
+      "short_name": "Appointments",
+      "description": "View appointment book and schedule slots",
+      "url": "/appointments",
+      "icons": [{ "src": "/salora.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Queue & Tokens",
+      "short_name": "Queue",
+      "description": "Manage walk-ins and print queue tokens",
+      "url": "/appointments/queue",
+      "icons": [{ "src": "/salora.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "POS Quick Checkout",
+      "short_name": "Billing",
+      "description": "Open cash register and billing terminal",
+      "url": "/sales",
+      "icons": [{ "src": "/salora.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Customer Lounge",
+      "short_name": "Client Portal",
+      "description": "Customer bookings and loyalty rewards",
+      "url": "/customer/dashboard",
+      "icons": [{ "src": "/salora.png", "sizes": "192x192" }]
+    }
+  ]
+}

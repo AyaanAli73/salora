@@ -1,0 +1,178 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* SALORA Light Theme — Premium Clean Palette */
+  --color-bg: 248 250 252;          /* #F8FAFC */
+  --color-surface: 255 255 255;     /* #FFFFFF */
+  --color-surface-elevated: 255 255 255;
+  --color-surface-subtle: 243 244 246; /* #F3F4F6 */
+  
+  --color-border: 229 231 235;      /* #E5E7EB */
+  --color-border-subtle: 243 244 246; /* #F3F4F6 */
+  --color-border-strong: 209 213 219; /* #D1D5DB */
+
+  --color-text-primary: 17 24 39;    /* #111827 */
+  --color-text-secondary: 75 85 99;  /* #4B5563 */
+  --color-text-muted: 156 163 175;   /* #9CA3AF */
+  --color-text-inverse: 255 255 255;
+
+  /* Primary Brand (Elegant Teal) */
+  --color-primary: 20 184 166;       /* #14B8A6 */
+  --color-primary-hover: 13 148 136; /* #0D9488 */
+  --color-primary-fg: 255 255 255;
+  --color-primary-light: 240 253 250;/* #F0FDFA */
+
+  /* Accent Brand (Warm Rose) */
+  --color-accent: 244 63 94;         /* #F43F5E */
+  --color-accent-fg: 255 255 255;
+  --color-accent-light: 255 241 242; /* #FFF1F2 */
+
+  /* Semantic Feedback */
+  --color-success: 16 185 129;       /* #10B981 */
+  --color-success-light: 236 253 245;/* #ECFDF5 */
+  --color-success-fg: 6 95 70;       /* #065F46 */
+
+  --color-warning: 245 158 11;       /* #F59E0B */
+  --color-warning-light: 254 243 199;/* #FEF3C7 */
+  --color-warning-fg: 146 64 14;     /* #92400E */
+
+  --color-danger: 239 68 68;         /* #EF4444 */
+  --color-danger-light: 254 242 242; /* #FEF2F2 */
+  --color-danger-fg: 153 27 27;      /* #991B1B */
+
+  --color-info: 59 130 246;          /* #3B82F6 */
+  --color-info-light: 239 246 255;   /* #EFF6FF */
+  --color-info-fg: 30 64 175;        /* #1E40AF */
+
+  color-scheme: light;
+}
+
+.dark {
+  /* SALORA Dark Theme — Deep Slate */
+  --color-bg: 15 23 42;              /* #0F172A */
+  --color-surface: 30 41 59;         /* #1E293B */
+  --color-surface-elevated: 51 65 85;/* #334155 */
+  --color-surface-subtle: 30 41 59;
+  
+  --color-border: 51 65 85;          /* #334155 */
+  --color-border-subtle: 30 41 59;
+  --color-border-strong: 71 85 105;
+
+  --color-text-primary: 248 250 252;
+  --color-text-secondary: 203 213 225;
+  --color-text-muted: 100 116 139;
+  --color-text-inverse: 15 23 42;
+
+  --color-primary: 45 212 191;       /* #2DD4BF */
+  --color-primary-hover: 94 234 212;
+  --color-primary-fg: 15 23 42;
+  --color-primary-light: 17 35 45;
+
+  --color-accent: 251 113 133;
+  --color-accent-fg: 15 23 42;
+  --color-accent-light: 50 20 30;
+
+  --color-success: 52 211 153;
+  --color-success-light: 6 44 32;
+  --color-success-fg: 167 243 208;
+
+  --color-warning: 251 191 36;
+  --color-warning-light: 51 35 7;
+  --color-warning-fg: 253 230 138;
+
+  --color-danger: 248 113 113;
+  --color-danger-light: 54 15 15;
+  --color-danger-fg: 254 202 202;
+
+  --color-info: 96 165 250;
+  --color-info-light: 15 32 67;
+  --color-info-fg: 191 219 254;
+
+  color-scheme: dark;
+}
+
+@layer base {
+  * {
+    border-color: rgb(var(--color-border));
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    touch-action: manipulation;
+    overflow-x: hidden;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  body {
+    min-height: 100vh;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    overflow-x: hidden;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  #root {
+    min-height: 100vh;
+    overflow-x: hidden;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  /* Accessible focus rings */
+  :focus-visible {
+    outline: 2px solid rgb(var(--color-primary));
+    outline-offset: 2px;
+  }
+
+  /* Tabular numbers for clean data alignment */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Custom sleek scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.3);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.5);
+}
+
+/* Glassmorphism helpers */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.dark .glass-panel {
+  background: rgba(30, 41, 59, 0.85);
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,63 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isImage() {
+      return request.resource.contentType.matches('image/.*');
+    }
+
+    function isPdf() {
+      return request.resource.contentType == 'application/pdf';
+    }
+
+    function isValidFileSize(maxMegabytes) {
+      return request.resource.size < maxMegabytes * 1024 * 1024;
+    }
+
+    // Default Deny
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+
+    // Salon branding (Logo & promotional assets)
+    match /salon/branding/{fileName} {
+      allow read: if true; // Publicly accessible for PWA and client booking screens
+      allow write: if isSignedIn() && isImage() && isValidFileSize(5);
+    }
+
+    // Staff avatars & photos
+    match /staff/avatars/{fileName} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn() && isImage() && isValidFileSize(5);
+    }
+
+    // Service catalog images
+    match /services/images/{fileName} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn() && isImage() && isValidFileSize(8);
+    }
+
+    // Client profile & consultation photos
+    match /clients/photos/{fileName} {
+      allow read, write: if isSignedIn() && isImage() && isValidFileSize(10);
+    }
+
+    // Expense receipts & Supplier bills
+    match /expenses/receipts/{fileName} {
+      allow read, write: if isSignedIn() && (isImage() || isPdf()) && isValidFileSize(10);
+    }
+
+    match /suppliers/invoices/{fileName} {
+      allow read, write: if isSignedIn() && (isImage() || isPdf()) && isValidFileSize(10);
+    }
+
+    // General salon documents & export archives
+    match /documents/{fileName} {
+      allow read, write: if isSignedIn() && isValidFileSize(15);
+    }
+  }
+}

@@ -1,0 +1,236 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // -------------------------------------------------------------
+    // Helper Functions for Single-Salon Security
+    // -------------------------------------------------------------
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function getUserData() {
+      return exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        ? get(/databases/$(database)/documents/users/$(request.auth.uid)).data
+        : null;
+    }
+
+    // Role resolution: checks custom claims first, falls back to users/{uid} document,
+    // defaults to 'owner' for single-salon authenticated users.
+    function getUserRole() {
+      return request.auth.token.role != null
+        ? request.auth.token.role
+        : (getUserData() != null && getUserData().role != null ? getUserData().role : 'owner');
+    }
+
+    function isOwner() {
+      return isSignedIn() && (getUserRole() == 'owner');
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (getUserRole() == 'admin' || isOwner());
+    }
+
+    function isManager() {
+      return isSignedIn() && (getUserRole() == 'manager' || isAdmin());
+    }
+
+    function isStaff() {
+      return isSignedIn();
+    }
+
+    // -------------------------------------------------------------
+    // Default Deny All Unmatched Documents
+    // -------------------------------------------------------------
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // -------------------------------------------------------------
+    // Salon & Owner Identity
+    // -------------------------------------------------------------
+    match /salon/{docId} {
+      // Allow reading salon info (e.g. for customer booking widgets or authenticated staff)
+      allow read: if true;
+      allow write: if isSignedIn();
+    }
+
+    match /owner/{docId} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn();
+    }
+
+    // -------------------------------------------------------------
+    // User Profiles (users/{userId})
+    // -------------------------------------------------------------
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+    }
+
+    // -------------------------------------------------------------
+    // Operational Counters (Sequential Tokens & Invoice Numbers)
+    // Required for atomic transactions (runTransaction)
+    // -------------------------------------------------------------
+    match /counters/{counterId} {
+      allow read, write: if isSignedIn();
+    }
+
+    // -------------------------------------------------------------
+    // Appointments & Live Queue Tokens
+    // -------------------------------------------------------------
+    match /appointments/{appointmentId} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /tokens/{tokenId} {
+      allow read, write: if isSignedIn();
+    }
+
+    // -------------------------------------------------------------
+    // Clients & Customer Directory
+    // -------------------------------------------------------------
+    match /clients/{clientId} {
+      allow read, write: if isSignedIn();
+    }
+
+    // -------------------------------------------------------------
+    // Services Catalog & Staff Members
+    // -------------------------------------------------------------
+    match /services/{serviceId} {
+      // Publicly readable for customer portal booking, authenticated for management
+      allow read: if true;
+      allow write: if isSignedIn();
+    }
+
+    match /staff/{staffId} {
+      // Publicly readable for stylist selection, authenticated for management
+      allow read: if true;
+      allow write: if isSignedIn();
+    }
+
+    // -------------------------------------------------------------
+    // Financial Records: Bills, Invoices & Payments
+    // -------------------------------------------------------------
+    match /bills/{billId} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /payments/{paymentId} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /invoices/{invoiceId} {
+      allow read, write: if isSignedIn();
+    }
+
+    // -------------------------------------------------------------
+    // Inventory, Purchases & Suppliers
+    // -------------------------------------------------------------
+    match /products/{productId} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /inventoryMovements/{movementId} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /suppliers/{supplierId} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /purchases/{purchaseId} {
+      allow read, write: if isSignedIn();
+    }
+
+    // -------------------------------------------------------------
+    // Expenses & Cash Register
+    // -------------------------------------------------------------
+    match /expenses/{expenseId} {
+      allow read, write: if isSignedIn();
+    }
+
+    // -------------------------------------------------------------
+    // Staff Attendance, Shifts, Leaves & Payroll
+    // -------------------------------------------------------------
+    match /attendance/{attendanceId} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /leaveRequests/{leaveId} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /payroll/{payrollId} {
+      allow read, write: if isSignedIn();
+    }
+
+    // -------------------------------------------------------------
+    // Memberships, Packages, Rewards & Loyalty
+    // -------------------------------------------------------------
+    match /memberships/{membershipId} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /packages/{packageId} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /rewards/{rewardId} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /loyaltyTransactions/{txId} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /reviews/{reviewId} {
+      allow read: if true;
+      allow write: if isSignedIn();
+    }
+
+    // -------------------------------------------------------------
+    // Marketing, Communications & Automations
+    // -------------------------------------------------------------
+    match /campaigns/{campaignId} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /communicationLogs/{logId} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /automations/{automationId} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /automationExecutions/{execId} {
+      allow read, write: if isSignedIn();
+    }
+
+    // -------------------------------------------------------------
+    // Notifications & Audit Logs
+    // -------------------------------------------------------------
+    match /notifications/{notificationId} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /auditLogs/{auditId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update, delete: if isOwner();
+    }
+
+    // -------------------------------------------------------------
+    // Salon Business Days & Settings
+    // -------------------------------------------------------------
+    match /businessDays/{dayId} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if isSignedIn();
+    }
+  }
+}
